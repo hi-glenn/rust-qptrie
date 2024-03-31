@@ -24,9 +24,10 @@ fn test_lpm() {
     t.insert("1A".as_bytes(), 1);
 
     println!("\n1b"); // 0x62
-    t.insert("com.baidu".as_bytes(), 11);
-    t.insert("com.baidu.w88".as_bytes(), 12);
-    // t.insert("com.baidu.ww".as_bytes(), 13);
+    t.insert("com.".as_bytes(), 10);
+    t.insert("com.baidu3".as_bytes(), 11);
+    t.insert("com.baidu4w88.".as_bytes(), 12);
+    // t.insert("com.baidu3w".as_bytes(), 13);
     // t.insert("com.baidu.www.".as_bytes(), 14);
     // t.insert("com.baidu.www.7".as_bytes(), 15);
 
@@ -43,7 +44,7 @@ fn test_lpm() {
 
     println!("\n\n--------------\n\n");
 
-    let ret = t.get_lpm_mut(&"com.baidu.www.6".as_bytes());
+    let ret = t.get_lpm_mut(&"com.baid4".as_bytes());
     println!("🍎 get: {:?}", ret);
 
     println!("\n\n--------------");
