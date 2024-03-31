@@ -11,7 +11,7 @@ const COMPLETE_KEY_NIBBLE: usize = 0;
 #[derive(Clone, Debug)]
 pub struct Trie<TK: PartialEq + AsRef<[u8]>, TV> {
     root: Option<Node<TK, TV>>,
-    max_height: usize,
+ pub   max_height: usize,
 }
 
 impl<TK: PartialEq + AsRef<[u8]>, TV> Default for Trie<TK, TV> {
@@ -196,15 +196,23 @@ impl<TK: PartialEq + AsRef<[u8]>, TV> Trie<TK, TV> {
         }
         if x == 0 {
             if key_len == leaf_key_len {
+                // 若新 key 与 已有 key 相同；则返回 false
                 leaf.val = val;
                 return false;
             }
             x = 0xff;
+            // "ab" 与 "ab`" 这种，算作左 4 位开始不同
         }
         let mut index = i * 2;
         if (x & 0xf0) == 0 {
+            // 左 4 位相同；右 4 位不同
+            // 即：右 4 位开始不同
             index += 1;
         }
+        // 左 4 位不同；右 4 位相同
+        // 左 4 位不同；右 4 位不同
+        // 即：左 4 位开始不同
+
         let mut t: *mut Node<TK, TV> = self.root.as_mut().unwrap();
         loop {
             match *unsafe { &mut *t } {
@@ -236,6 +244,33 @@ impl<TK: PartialEq + AsRef<[u8]>, TV> Trie<TK, TV> {
             }
         }
     }
+
+// -------------
+
+// ok
+    // pub fn get_lpm_mut(&mut self, key: TK) -> (*mut LeafNode<TK, TV>, usize){
+    //     Self::find_closest_leaf_mut(self.root.as_mut().unwrap(), key.as_ref())
+    // }
+
+    pub fn get_lpm_mut(&mut self, key: TK) -> Option<&TV>{
+        // let (leaf, height) = unsafe {Self::find_closest_leaf_mut(self.root.as_mut().unwrap(), key.as_ref())};
+        // leaf
+
+        // unsafe{
+        //     leaf.
+        // }
+
+        let (leaf, height) = unsafe {
+            let closest = Self::find_closest_leaf_mut(self.root.as_mut().unwrap(), key.as_ref());
+            (&mut *closest.0, closest.1)
+        };
+
+        Some(&leaf.val)
+    }
+
+    // pub fn get_lpm<'t>(&self, key: TK) -> (&'t LeafNode<TK, TV>, usize){
+    //     Self::find_closest_leaf(&self.root.unwrap(), key.as_ref())
+    // }
 
     /// Returns the value associated with the key `key`, or `None` if the key is
     /// not present in the trie.

@@ -7,9 +7,47 @@ use qp_trie::*;
 fn main() {
     // test_get_lpm();
 
-    test_get_lpm2();
+    // test_get_lpm2();
 
     // test_get_lpm3();
+
+    test_lpm();
+}
+
+fn test_lpm() {
+    let mut t = Trie::<&[u8], u32>::new();
+
+    println!("\n1b"); // 0x62
+    t.insert("1b".as_bytes(), 5);
+
+    println!("\n1A"); // 0x41
+    t.insert("1A".as_bytes(), 1);
+
+    println!("\n1b"); // 0x62
+    t.insert("com.baidu".as_bytes(), 11);
+    t.insert("com.baidu.w88".as_bytes(), 12);
+    // t.insert("com.baidu.ww".as_bytes(), 13);
+    // t.insert("com.baidu.www.".as_bytes(), 14);
+    // t.insert("com.baidu.www.7".as_bytes(), 15);
+
+    println!("\n--------------");
+    let ret = t.get(&"1b".as_bytes());
+    println!("🍟 get: {:?}", ret);
+
+    println!("\n--------------");
+
+    println!("\n----max_height: {};", t.max_height);
+
+
+    // t.find_closest_leaf(t, &"1b".as_bytes());
+
+    println!("\n\n--------------\n\n");
+
+    let ret = t.get_lpm_mut(&"com.baidu.www.6".as_bytes());
+    println!("🍎 get: {:?}", ret);
+
+    println!("\n\n--------------");
+
 }
 
 // 左 4 不同，右 4 相同
